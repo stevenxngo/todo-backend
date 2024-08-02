@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TODO API Server Documentation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background: #333;
+            color: #fff;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #fff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 2.5rem;
+        }
+
+        h2 {
+            color: #333;
+            font-size: 2rem;
+            border-bottom: 2px solid #333;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .endpoint {
+            background: #e9ecef;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .endpoint h3 {
+            margin-top: 0;
+            font-size: 1.5rem;
+            color: #007bff;
+        }
+
+        pre {
+            background: #f1f1f1;
+            padding: 1rem;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid #ddd;
+        }
+
+        .example {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .response {
+            background: #e9ecef;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .code {
+            background: #e9ecef;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 1rem;
+            margin-top: 0.5rem;
+            overflow-x: auto;
+        }
+
+        .code code {
+            background: #fff;
+            padding: 0.5rem;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>TODO API Server Documentation</h1>
+    </header>
+    <div class="container">
+        <h2>API Endpoints</h2>
+
+        <div class="endpoint">
+            <h3>GET /todos</h3>
+            <p>Retrieve a list of all TODO items.</p>
+            <pre><code>GET /todos</code></pre>
+            <p>This endpoint returns a JSON array of all TODO items stored in the database. Each item includes its ID, title, and completion status.</p>
+            <div class="code">
+                <h4>Responses:</h4>
+                <pre><code>200 OK
+[
+  {
+    "id": 1,
+    "title": "Example Task",
+    "completed": false
+  }
+]</code></pre>
+                <pre><code>500 Internal Server Error
+{
+  "error": "An error occurred"
+}</code></pre>
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <h3>POST /todos</h3>
+            <p>Create a new TODO item.</p>
+            <pre><code>POST /todos</code></pre>
+            <p>Request Body:</p>
+            <div class="example">
+                <pre><code>{
+  "title": "New Task"
+}</code></pre>
+            </div>
+            <p>The title is required to create a new TODO item. The response will include the ID of the newly created item and its initial completion status (false by default).</p>
+            <div class="code">
+                <h4>Responses:</h4>
+                <pre><code>201 Created
+{
+  "id": 1,
+  "title": "New Task",
+  "completed": false
+}</code></pre>
+                <pre><code>400 Bad Request
+{
+  "error": "Title is required"
+}</code></pre>
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <h3>GET /todos/&lt;id&gt;</h3>
+            <p>Retrieve a TODO item by ID.</p>
+            <pre><code>GET /todos/1</code></pre>
+            <p>This endpoint returns a JSON object representing the TODO item with the specified ID. If the item is not found, a 404 error is returned.</p>
+            <div class="code">
+                <h4>Responses:</h4>
+                <pre><code>200 OK
+{
+  "id": 1,
+  "title": "Example Task",
+  "completed": false
+}</code></pre>
+                <pre><code>404 Not Found
+{
+  "error": "ToDo item not found"
+}</code></pre>
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <h3>PUT /todos/&lt;id&gt;</h3>
+            <p>Update a TODO item by ID.</p>
+            <pre><code>PUT /todos/1</code></pre>
+            <p>Request Body:</p>
+            <div class="example">
+                <pre><code>{
+  "title": "Updated Task",
+  "completed": true
+}</code></pre>
+            </div>
+            <p>Update the title and completion status of an existing TODO item. If not provided, the title or completed fields will remain unchanged. The response includes the updated item details.</p>
+            <div class="code">
+                <h4>Responses:</h4>
+                <pre><code>200 OK
+{
+  "id": 1,
+  "title": "Updated Task",
+  "completed": true
+}</code></pre>
+                <pre><code>404 Not Found
+{
+  "error": "ToDo item not found"
+}</code></pre>
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <h3>DELETE /todos/&lt;id&gt;</h3>
+            <p>Delete a TODO item by ID.</p>
+            <pre><code>DELETE /todos/1</code></pre>
+            <p>A successful request will return a confirmation message. If the item is not found, a 404 error is returned.</p>
+            <div class="code">
+                <h4>Responses:</h4>
+                <pre><code>200 OK
+{
+  "message": "ToDo item deleted"
+}</code></pre>
+                <pre><code>404 Not Found
+{
+  "error": "ToDo item not found"
+}</code></pre>
+            </div>
+        </div>
+
+        <p>For more details or additional functionalities, please refer to the API documentation or contact the administrator.</p>
+    </div>
+</body>
+</html>
