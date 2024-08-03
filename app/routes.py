@@ -223,6 +223,16 @@ def setup_routes(app):
                     error:
                       type: string
                       example: "ToDo item not found"
+          400:
+            description: Bad request, priority must be 1, 2, or 3
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      example: "Priority must be 1, 2, or 3"
         """
         with db.session() as session:
             todo = session.get(ToDo, id)
@@ -232,6 +242,8 @@ def setup_routes(app):
             todo.title = data.get('title', todo.title)
             todo.completed = data.get('completed', todo.completed)
             todo.description = data.get('description', todo.description)
+            if 'priority' in data and data['priority'] not in [1, 2, 3]:
+              return jsonify({'error': 'Priority must be 1, 2, or 3'}), 400
             todo.priority = data.get('priority', todo.priority)
             session.commit()
             return jsonify(todo.to_dict())

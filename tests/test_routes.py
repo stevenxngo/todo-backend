@@ -114,6 +114,15 @@ def test_update_todo_success(client):
 def test_update_todo_not_found(client):
     response = client.put('/todos/9999', json={'title': 'Non-existent'})
     assert response.status_code == 404
+    
+def test_update_todo_invalid_priority(client):
+    response = client.post('/todos', json={'title': 'Invalid Priority'})
+    assert response.status_code == 201
+    todo_id = response.json['id']
+
+    response = client.put(f'/todos/{todo_id}', json={'priority': 4})
+    assert response.status_code == 400
+    assert b'Priority must be 1, 2, or 3' in response.data
 
 def test_delete_todo_success(client):
     response = client.post('/todos', json={'title': 'Delete Test Todo'})

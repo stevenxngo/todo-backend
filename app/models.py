@@ -1,6 +1,11 @@
 from app import db
+from sqlalchemy import CheckConstraint
 
 class ToDo(db.Model):
+    __tablename__ = 'to_do'
+    __table_args__ = (
+        CheckConstraint('priority IN (1, 2, 3)', name='chk_priority'),
+    )
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(128), nullable=False)
     completed = db.Column(db.Boolean, default=False)

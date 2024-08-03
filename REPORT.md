@@ -8,9 +8,9 @@ This document provides an in-depth look at the updates I made to the TODO List a
 
 ### 1. Extend the `ToDo` model
 
-I extended the `ToDo` model to include two new fields: a string field `description` and integer field `priority`.I also set the default values for these fields to empty strings and 1, respectively to ensure that the fields are not null. 
+I extended the `ToDo` model to include two new fields: a string field `description` and integer field `priority`.I also set the default values for these fields to empty strings and 3 (low), respectively to ensure that the fields are not null. 
 
-A challenge I faced with this step was how to represent the priority field and whether or not to restrict the values to a specific range, such as 1-3 in the instructions (this is something as of writing I plan to ask for clarification on). I decided to allow any integer value for the priority field, as this would allow for more flexibility in the future. However, if I were to restrict the values, I would have used a `CheckConstraint` in the model to ensure that the priority field is within the desired range. I would have also validated the priority field in the API to ensure that only valid values are accepted and sending an appropriate error message if an invalid value is provided.
+An initial challenge I faced was whether or not to enforce the suggested range of 1-3 for the `priority` field, as I interpreted it as one of many examples of how priority could be represented as integers. However, after taking a look at the frontend, where the priority is represented as a dropdown with three distinct values, I decided to enforce the range of 1-3. I did this by adding a `CheckConstraint` to the model to ensure that the `priority` field is within the desired range. I also validated the `priority` field in the API to ensure that only valid values are accepted and sending an appropriate error message if an invalid value is provided. I also wrote a test to ensure the correct error message is returned when an invalid priority value is provided.
 
 ### 2. Update CRUD Operations
 
@@ -42,4 +42,4 @@ With the `delete_todo` function implemented, the two failing tests now pass.
 
 ### 3. Update existing tests
 
-To ensure the tests cover the new fields I added new `ToDo` items in `populate_todos` with various `description` and `priority` values. I updated `test_get_todos_with_items` to check for the titles of the new items, using list comprehension to simplify the process. I also added tests for the `description` and `priority` fields in `test_create_todo_success` and `test_update_todo_success`.
+To ensure the tests cover the new fields I added new `ToDo` items in `populate_todos` with various `description` and `priority` values. I updated `test_get_todos_with_items` to check for the titles of the new items, using list comprehension to simplify the process. I also added tests for the `description` and `priority` fields in `test_create_todo_success` and `test_update_todo_success`. Lastly, I created a new test `test_update_todo_invalid_priority` to ensure that an invalid priority value returns the correct error message.
