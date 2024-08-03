@@ -1,5 +1,7 @@
 # ToDo Backend
 
+**Please refer to [REPORT.md](/REPORT.md) for documentation on the tasks completed.**
+
 This project is a simple ToDo backend API built with Flask, SQLAlchemy, and Flask-Migrate. It supports CRUD operations 
 for managing ToDo items and provides basic documentation of the API via the `/` route. This is a standard OpenAPI spec
 swagger API.

@@ -26,7 +26,21 @@ def populate_todos(app):
         todos = [
             ToDo(title='First Todo'),
             ToDo(title='Second Todo', completed=True),
-            ToDo(title='Third Todo')
+            ToDo(title='Third Todo'),
+            ToDo(
+                title='Fourth Todo',
+                completed=False,
+                description='This is the fourth todo',
+            ),
+            ToDo(title='Fifth Todo', completed=True, priority=1),
+            ToDo(title='Sixth Todo', description='This is the sixth todo'),
+            ToDo(title='Seventh Todo', priority=2),
+            ToDo(
+                title='Eighth Todo',
+                completed=True,
+                description='This is the eighth todo',
+                priority=1,
+            ),
         ]
         db.session.bulk_save_objects(todos)
         db.session.commit()
@@ -47,11 +61,19 @@ def test_get_todos_with_items(client, populate_todos):
     response = client.get('/todos')
     assert response.status_code == 200
     data = response.json
-    assert len(data) == 3
+    assert len(data) == 8
     titles = [todo['title'] for todo in data]
-    assert 'First Todo' in titles
-    assert 'Second Todo' in titles
-    assert 'Third Todo' in titles
+    expected_titles = [
+        'First Todo',
+        'Second Todo',
+        'Third Todo',
+        'Fourth Todo',
+        'Fifth Todo',
+        'Sixth Todo',
+        'Seventh Todo',
+        'Eighth Todo',
+    ]
+    assert all(title in titles for title in expected_titles)
 
 def test_create_todo_success(client):
     response = client.post('/todos', json={'title': 'Test Todo'})
@@ -60,6 +82,8 @@ def test_create_todo_success(client):
     assert 'id' in data
     assert data['title'] == 'Test Todo'
     assert data['completed'] == False
+    assert data['description'] == ''
+    assert data['priority'] == 1
 
 def test_create_todo_missing_title(client):
     response = client.post('/todos', json={})
@@ -71,11 +95,21 @@ def test_update_todo_success(client):
     assert response.status_code == 201
     todo_id = response.json['id']
 
-    response = client.put(f'/todos/{todo_id}', json={'title': 'Updated Title', 'completed': True})
+    response = client.put(
+        f'/todos/{todo_id}',
+        json={
+            'title': 'Updated Title',
+            'completed': True,
+            'description': 'This is the updated todo',
+            'priority': 2,
+        },
+    )
     assert response.status_code == 200
     data = response.json
     assert data['title'] == 'Updated Title'
     assert data['completed'] == True
+    assert data['description'] == 'This is the updated todo'
+    assert data['priority'] == 2
 
 def test_update_todo_not_found(client):
     response = client.put('/todos/9999', json={'title': 'Non-existent'})
