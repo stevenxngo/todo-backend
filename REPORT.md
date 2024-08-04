@@ -8,9 +8,11 @@ This document provides an in-depth look at the updates I made to the TODO List a
 
 ### 1. Extend the `ToDo` model
 
-I extended the `ToDo` model to include two new fields: a string field `description` and integer field `priority`.I also set the default values for these fields to empty strings and 3 (low), respectively to ensure that the fields are not null. 
+I extended the `ToDo` model to include two new fields: a string field `description` and integer field `priority`.I also set the default values for these fields to empty strings and 1 (high), respectively to ensure that the fields are not null. 
 
-An initial challenge I faced was whether or not to enforce the suggested range of 1-3 for the `priority` field, as I interpreted it as one of many examples of how priority could be represented as integers. However, after taking a look at the frontend, where the priority is represented as a dropdown with three distinct values, I decided to enforce the range of 1-3. I did this by adding a `CheckConstraint` to the model to ensure that the `priority` field is within the desired range. I also validated the `priority` field in the API to ensure that only valid values are accepted and sending an appropriate error message if an invalid value is provided. I also wrote a test to ensure the correct error message is returned when an invalid priority value is provided.
+One challenge I faced was whether or not to enforce the suggested range of 1-3 for the `priority` field, as I interpreted it as one of many examples of how priority could be represented as integers. However, after taking a look at the frontend, where the priority is represented as a dropdown with three distinct values in the create ToDo page, I decided to enforce the range of 1-3. I did this by adding a `CheckConstraint` to the model to ensure that the `priority` field is within the desired range. I also validated the `priority` field in the API to ensure that only valid values are accepted and sending an appropriate error message if an invalid value is provided. I also wrote a test to ensure the correct error message is returned when an invalid priority value is provided.
+
+Another challenge I faced was if `description` and `priority` should be included when creating a new `ToDo` item, as the current implementation only requires a `title` field and not completion status. However, the add ToDo page in the frontend includes fields for `description` and `priority`, so I decided to include them in the create operation.
 
 ### 2. Update CRUD Operations
 
@@ -42,4 +44,9 @@ With the `delete_todo` function implemented, the two failing tests now pass.
 
 ### 3. Update existing tests
 
-To ensure the tests cover the new fields I added new `ToDo` items in `populate_todos` with various `description` and `priority` values. I updated `test_get_todos_with_items` to check for the titles of the new items, using list comprehension to simplify the process. I also added tests for the `description` and `priority` fields in `test_create_todo_success` and `test_update_todo_success`. Lastly, I created a new test `test_update_todo_invalid_priority` to ensure that an invalid priority value returns the correct error message.
+To ensure the tests cover the new fields I added new `ToDo` items in `populate_todos` with various `description` and `priority` values. I updated `test_get_todos_with_items` to check for the titles of the new items, using list comprehension to simplify the process. I also added assertions for the `description` and `priority` fields in `test_create_todo_success` and `test_update_todo_success`. Lastly, I created new tests to ensure that a ToDo item is created successfully with the new fields and that the correct error message is returned when an invalid `priority` value is provided during creation and updating.
+
+
+## Challenges and Solutions
+
+I have experience working with Flask and SQLAlchemy, so the initial setup was straightforward. However, the two main challenges I faced were the aforementioned decision on how to handle the range of the `priority` field and whether or not to include the `description` and `priority` fields in the create operation. I initially planned on not enforcing the range and not including the fields in creation, with the intention of asking for clarification after and making a note. However, after reviewing the current implementation of the frontend, I decided to enforce the range and include the fields in the create operation. 

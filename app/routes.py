@@ -60,6 +60,14 @@ def setup_routes(app):
                     type: string
                     description: The title of the new TODO item
                     example: "New Task"
+                  description
+                    type: string
+                    description: The description of the new TODO item
+                    example: "This is a new task"
+                  priority:
+                    type: integer
+                    description: The priority of the new TODO item
+                    example: 1
         responses:
           201:
             description: The created TODO item
@@ -97,7 +105,12 @@ def setup_routes(app):
         data = request.get_json() or {}
         if 'title' not in data:
             return jsonify({'error': 'Title is required'}), 400
-        todo = ToDo(title=data['title'])
+        if 'priority' in data and data['priority'] not in [1, 2, 3]:
+            return jsonify({'error': 'Priority must be 1, 2, or 3'}), 400
+        todo = ToDo(
+          title=data['title'], 
+          description=data.get('description', ''), 
+          priority=data.get('priority', 1))
         with db.session() as session:
             session.add(todo)
             session.commit()

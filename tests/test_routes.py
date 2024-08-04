@@ -75,7 +75,7 @@ def test_get_todos_with_items(client, populate_todos):
     ]
     assert all(title in titles for title in expected_titles)
 
-def test_create_todo_success(client):
+def test_create_todo_success_only_title(client):
     response = client.post('/todos', json={'title': 'Test Todo'})
     assert response.status_code == 201
     data = response.json
@@ -84,11 +84,35 @@ def test_create_todo_success(client):
     assert data['completed'] == False
     assert data['description'] == ''
     assert data['priority'] == 1
+    
+def test_create_todo_success_all_fields(client):
+    response = client.post(
+        '/todos',
+        json={
+            'title': 'Test Todo',
+            'description': 'This is a test todo',
+            'priority': 2,
+        },
+    )
+    assert response.status_code == 201
+    data = response.json
+    assert 'id' in data
+    assert data['title'] == 'Test Todo'
+    assert data['completed'] == False
+    assert data['description'] == 'This is a test todo'
+    assert data['priority'] == 2
 
 def test_create_todo_missing_title(client):
     response = client.post('/todos', json={})
     assert response.status_code == 400
     assert b'Title is required' in response.data
+    
+def test_create_todo_invalid_priority(client):
+    response = client.post(
+        '/todos', json={'title': 'Invalid Priority', 'priority': 4}
+    )
+    assert response.status_code == 400
+    assert b'Priority must be 1, 2, or 3' in response.data
 
 def test_update_todo_success(client):
     response = client.post('/todos', json={'title': 'Update Test Todo'})
