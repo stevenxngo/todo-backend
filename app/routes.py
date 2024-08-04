@@ -60,7 +60,7 @@ def setup_routes(app):
                     type: string
                     description: The title of the new TODO item
                     example: "New Task"
-                  description
+                  description:
                     type: string
                     description: The description of the new TODO item
                     example: "This is a new task"
